@@ -56,11 +56,7 @@ function FormatPrice({ amount, decimalPoint = 2, decimals, mt = '0px', num, pric
   }, [amount, decimals, num, price]);
 
   return (
-    <Grid
-      item
-      mt={mt}
-      textAlign={textAlign}
-    >
+    <Grid item mt={mt} textAlign={textAlign} >
       {total !== undefined
         ? `$${nFormatter(total, decimalPoint)}`
         : <Skeleton

@@ -19,7 +19,7 @@ export default function usePrices(): Prices | undefined | null {
   const [newPrices, setNewPrices] = useState<Prices | null>();
 
   useEffect(() => {
-    async function fetchPrices() {
+    async function fetchPrices () {
       try {
         const fetchedPrices = await getPrices(chainNames);
 
@@ -30,8 +30,7 @@ export default function usePrices(): Prices | undefined | null {
     }
 
     if (chainNames.length) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      fetchPrices();
+      fetchPrices().catch(console.error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainNames.length]);

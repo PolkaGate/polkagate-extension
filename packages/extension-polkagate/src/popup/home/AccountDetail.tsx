@@ -15,6 +15,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 
 import { stars5Black, stars5White } from '../../assets/icons';
 import { CopyAddressButton, FormatBalance2, FormatPrice, Infotip } from '../../components';
+import { formatEth, isEthereum } from '../../eth/utils';
 import { useChainName, useTranslation } from '../../hooks';
 import useBalances from '../../hooks/useBalances';
 import usePrice from '../../hooks/usePrice';
@@ -90,12 +91,16 @@ export default function AccountDetail({ address, chain, formatted, goToAccount, 
     <>
       {balanceToShow?.decimal
         ? <Grid item sx={{ color: isBalanceOutdated ? 'primary.light' : 'text.primary', fontWeight: 500 }}>
-          <FormatBalance2
-            decimalPoint={2}
-            decimals={[balanceToShow.decimal]}
-            tokens={[balanceToShow.token]}
-            value={getValue('total', balanceToShow)}
-          />
+          {isEthereum(balanceToShow.accountId)
+            ? <Grid item>
+              {`${formatEth(balanceToShow.freeBalance)} ${balanceToShow.token}`}
+            </Grid>
+            : <FormatBalance2
+              decimalPoint={2}
+              decimals={[balanceToShow.decimal]}
+              tokens={[balanceToShow.token]}
+              value={getValue('total', balanceToShow)}
+            />}
         </Grid>
         : <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={90} />
       }
@@ -108,7 +113,7 @@ export default function AccountDetail({ address, chain, formatted, goToAccount, 
         ? <Skeleton animation='wave' height={22} sx={{ my: '2.5px', transform: 'none' }} variant='text' width={80} />
         : <Grid item sx={{ color: isPriceOutdated ? 'primary.light' : 'text.primary', fontWeight: 300 }}>
           <FormatPrice
-            amount={getValue('total', balanceToShow)}
+            amount={isEthereum(balanceToShow.accountId) ? balanceToShow.freeBalance : getValue('total', balanceToShow)}
             decimals={balanceToShow.decimal}
             price={price.amount}
           />

@@ -14,8 +14,6 @@ export default async function getPrices(chainNames: string[], currency = 'usd'):
     );
     const nonDuplicateChainNames = [...new Set(replaceAssetHubs)];
 
-    console.log(' getting prices for:', nonDuplicateChainNames);
-
     const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${nonDuplicateChainNames}&vs_currencies=${currency}`, {});
 
     if (chainNames.includes('pendulum')) {
@@ -27,6 +25,7 @@ export default async function getPrices(chainNames: string[], currency = 'usd'):
     }
 
     prices.westend = { usd: 0 };
+    prices.goreli = { usd: 0 };
     console.log('Prices:', prices);
 
     return { date: Date.now(), prices };

@@ -88,7 +88,7 @@ function CreateAccount(): React.ReactElement {
     if (name && password && seed) {
       setIsBusy(true);
 
-      createAccountSuri(name, password, seed)
+      createAccountSuri(name, password, seed, 'ethereum')
         .then(() => onAction('/'))
         .catch((error: Error): void => {
           setIsBusy(false);

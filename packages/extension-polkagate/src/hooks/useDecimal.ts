@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { selectableNetworks } from '@polkadot/networks';
 import { AccountId } from '@polkadot/types/interfaces/runtime';
 
+import { isEthereum } from '../eth/utils';
 import { getSubstrateAddress } from '../util/utils';
 import useChain from './useChain';
 
@@ -15,6 +16,10 @@ export default function useDecimal(address: AccountId | string | undefined): num
   const chain = useChain(sAddr);
 
   return useMemo(() => {
+    if (isEthereum(address)) {
+      return chain?.tokenDecimals;
+    }
+
     if (!chain?.genesisHash) {
       return undefined;
     }
@@ -22,5 +27,5 @@ export default function useDecimal(address: AccountId | string | undefined): num
     const network = selectableNetworks.find((network) => network.genesisHash[0] === chain?.genesisHash);
 
     return network?.decimals?.length ? network.decimals[0] : undefined;
-  }, [chain?.genesisHash]);
+  }, [address, chain]);
 }

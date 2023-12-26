@@ -51,6 +51,7 @@
     "better-react-spinkit": "^2.0.4",
     "chart.js": "^4.2.1",
     "css-loader": "^6.7.3",
+    "ethers": "^6.9.1",
     "framer-motion": "^7.5.1",
     "memoize-one": "^6.0.0",
     "qrcode.react": "^3.0.2",

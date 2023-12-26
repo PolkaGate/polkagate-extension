@@ -8,6 +8,7 @@ import { AccountContext } from '../components';
 export default function useChainNames(): string[] | undefined {
   const { hierarchy } = useContext(AccountContext);
   const [chainNames, setChainNames] = useState<string[]>();
+  console.log('hierarchy', hierarchy)
 
   useEffect(() => {
     const chainsToFetchPrice = new Set<string>();

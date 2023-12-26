@@ -135,6 +135,10 @@ export function getSubstrateAddress(address: AccountId | string | undefined): st
     return undefined;
   }
 
+  if (address.startsWith('0x')) {
+    return address;
+  }
+
   const publicKey = decodeAddress(address);
 
   return encodeAddress(publicKey, 42);

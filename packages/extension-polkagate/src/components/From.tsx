@@ -19,7 +19,6 @@ import { useChain, useFormatted } from '../hooks';
 import { getSubstrateAddress } from '../util/utils';
 import { Identity, ShortAddress } from '.';
 
-
 interface Props {
   address?: string;
   api: ApiPromise | undefined;
@@ -29,7 +28,7 @@ interface Props {
   _chain?: Chain | null | undefined;
 }
 
-function From({ address, api, _chain, formatted, style, title }: Props): React.ReactElement<Props> {
+function From({ _chain, address, api, formatted, style, title }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const chain = useChain(formatted || address, _chain);
   const _formatted = useFormatted(address);
