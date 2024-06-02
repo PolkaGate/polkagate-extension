@@ -93,5 +93,6 @@ export { default as DisplayLogo } from './DisplayLogo';
 export { default as FullScreenIcon } from './FullScreenIcon';
 export { default as OptionalCopyButton } from './OptionalCopyButton';
 export { default as Waiting } from './Waiting';
+export { default as PopupSignArea } from './PopupSignArea';
 
 export * from './contexts';

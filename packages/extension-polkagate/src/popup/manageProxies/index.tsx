@@ -14,25 +14,32 @@ import { ActionContext, PButton, ProxyTable, ShowBalance } from '../../component
 import { useInfo, useTranslation } from '../../hooks';
 import { HeaderBrand } from '../../partials';
 import { Proxy, ProxyItem } from '../../util/types';
-import { getFormattedAddress } from '../../util/utils';
 import AddProxy from './AddProxy';
 import Review from './Review';
+
+export const STEPS = {
+  INDEX: 1,
+  ADD_PROXY: 2,
+  REVIEW: 3,
+  WAIT_SCREEN: 4,
+  CONFIRM: 5,
+  PROXY: 100,
+  SIGN_QR: 200
+};
 
 export default function ManageProxies(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const { address } = useParams<{ address: string }>();
-  const { account, api, chain } = useInfo(address);
+  const { account, api, chain, formatted } = useInfo(address);
 
   const [proxyItems, setProxyItems] = useState<ProxyItem[] | undefined>();
-  const [showAddProxy, setShowAddProxy] = useState<boolean>(false);
-  const [showReviewProxy, setShowReviewProxy] = useState<boolean>(false);
-  const [formatted, setFormatted] = useState<string | undefined>();
   const [helperText, setHelperText] = useState<string>();
   const [depositValue, setDepositValue] = useState<BN | undefined>();
   const [disableAddProxyButton, setEnableAddProxyButton] = useState<boolean>(true);
   const [disableToConfirmButton, setEnableToConfirmButton] = useState<boolean>(true);
   const [available, setAvailable] = useState<number>(0);
+  const [step, setStep] = useState<number>(STEPS.INDEX);
 
   const proxyDepositBase = api ? api.consts.proxy.proxyDepositBase as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts.proxy.proxyDepositFactor as unknown as BN : BN_ZERO;
@@ -42,15 +49,15 @@ export default function ManageProxies(): React.ReactElement {
       return BN_ZERO;
     }
 
-    const alreadyHasProxy = proxyItems.filter((proxyItem) => proxyItem.status === 'current');
+    const currentProxies = proxyItems.filter((proxyItem) => proxyItem.status === 'current');
     const newProxiesLength = proxyItems.filter((proxyItem) => proxyItem.status === 'new').length;
     const removeProxiesLength = proxyItems.filter((proxyItem) => proxyItem.status === 'remove').length;
 
-    if (alreadyHasProxy.length === 0 && removeProxiesLength === 0) {
+    if (currentProxies.length === 0 && removeProxiesLength === 0) {
       return depositValue;
     }
 
-    const alreadyHasProxyDeposit = (proxyDepositFactor.muln((alreadyHasProxy.length + removeProxiesLength))).add(proxyDepositBase);
+    const alreadyHasProxyDeposit = (proxyDepositFactor.muln((currentProxies.length + removeProxiesLength))).add(proxyDepositBase);
 
     if (newProxiesLength > removeProxiesLength) {
       return alreadyHasProxyDeposit.add(proxyDepositFactor.muln(newProxiesLength - removeProxiesLength));
@@ -60,16 +67,20 @@ export default function ManageProxies(): React.ReactElement {
   }, [depositValue, proxyDepositBase, proxyDepositFactor, proxyItems]);
 
   const onBackClick = useCallback(() => {
-    showReviewProxy ? setShowReviewProxy(!showReviewProxy) : onAction('/');
-  }, [onAction, showReviewProxy]);
+    if ([STEPS.ADD_PROXY, STEPS.REVIEW].includes(step)) {
+      setStep(STEPS.INDEX);
+    } else {
+      onAction('/');
+    }
+  }, [onAction, step]);
 
   const openAddProxy = useCallback(() => {
-    !disableAddProxyButton && setShowAddProxy(!showAddProxy);
-  }, [disableAddProxyButton, showAddProxy]);
+    !disableAddProxyButton && setStep(STEPS.ADD_PROXY);
+  }, [disableAddProxyButton]);
 
-  const toConfirm = useCallback(() => {
-    setShowReviewProxy(!showReviewProxy);
-  }, [showReviewProxy]);
+  const toReview = useCallback(() => {
+    setStep(STEPS.REVIEW);
+  }, []);
 
   const checkForChanges = useCallback(() => {
     if (!disableAddProxyButton) {
@@ -79,7 +90,7 @@ export default function ManageProxies(): React.ReactElement {
       anyChanges && setEnableToConfirmButton(true);
     }
 
-    setAvailable(proxyItems?.filter((item) => item.status !== 'remove')?.length || 0);
+    setAvailable(proxyItems?.filter(({ status }) => status !== 'remove')?.length ?? 0);
   }, [disableAddProxyButton, proxyItems]);
 
   const onSelect = useCallback((selected: Proxy) => {
@@ -123,10 +134,9 @@ export default function ManageProxies(): React.ReactElement {
   }, [checkForChanges, proxyItems]);
 
   useEffect(() => {
-    chain && setFormatted(getFormattedAddress(address, undefined, chain.ss58Format));
     !available ? setDepositValue(BN_ZERO) : setDepositValue(proxyDepositBase.add(proxyDepositFactor.muln(available))) as unknown as BN;
     checkForChanges();
-  }, [address, api, available, chain, checkForChanges, formatted, proxyDepositBase, proxyDepositFactor, proxyItems]);
+  }, [address, api, available, chain, checkForChanges, proxyDepositBase, proxyDepositFactor, proxyItems]);
 
   useEffect(() => {
     proxyItems !== undefined && setEnableAddProxyButton(false);
@@ -150,12 +160,12 @@ export default function ManageProxies(): React.ReactElement {
   return (
     <>
       <HeaderBrand
-        onBackClick={showAddProxy ? openAddProxy : onBackClick}
+        onBackClick={onBackClick}
         showBackArrow
         showClose
-        text={showAddProxy ? t('Add Proxy') : t('Manage Proxies')}
+        text={step === STEPS.ADD_PROXY ? t('Add Proxy') : t('Manage Proxies')}
       />
-      {!showAddProxy && !showReviewProxy &&
+      {step === STEPS.INDEX &&
         <>
           <Typography fontSize='14px' fontWeight={300} m='25px auto' textAlign='left' width='90%'>
             {helperText}
@@ -194,7 +204,7 @@ export default function ManageProxies(): React.ReactElement {
               fontWeight={300}
               lineHeight='23px'
             >
-              {t('Deposit:')}
+              {t('Deposit')}:
             </Typography>
             <Grid item lineHeight='22px' pl='5px'>
               <ShowBalance
@@ -206,13 +216,13 @@ export default function ManageProxies(): React.ReactElement {
             </Grid>
           </Grid>
           <PButton
-            _onClick={toConfirm}
+            _onClick={toReview}
             disabled={disableToConfirmButton}
             text={t('Next')}
           />
         </>
       }
-      {showAddProxy && !showReviewProxy &&
+      {step === STEPS.ADD_PROXY && proxyItems && api &&
         <AddProxy
           address={address}
           api={api}
@@ -220,18 +230,19 @@ export default function ManageProxies(): React.ReactElement {
           onChange={checkForChanges}
           proxyItems={proxyItems}
           setProxyItems={setProxyItems}
-          setShowAddProxy={setShowAddProxy}
-          showAddProxy={showAddProxy}
+          setStep={setStep}
         />
       }
-      {showReviewProxy &&
+      {[STEPS.PROXY, STEPS.SIGN_QR, STEPS.REVIEW, STEPS.WAIT_SCREEN, STEPS.CONFIRM].includes(step) && api && depositValue && proxyItems &&
         <Review
-          address={formatted}
+          address={address}
           api={api}
           chain={chain}
           depositToPay={depositToPay}
           depositValue={depositValue}
           proxies={proxyItems}
+          setStep={setStep}
+          step={step}
         />
       }
     </>

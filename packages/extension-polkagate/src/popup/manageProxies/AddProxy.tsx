@@ -17,16 +17,16 @@ import getAllAddresses from '../../util/getAllAddresses';
 import { Proxy, ProxyItem } from '../../util/types';
 import { sanitizeChainName } from '../../util/utils';
 import ShowIdentity from './partials/ShowIdentity';
+import { STEPS } from '.';
 
 interface Props {
   address: string;
   api: ApiPromise;
-  showAddProxy: boolean;
-  setShowAddProxy: React.Dispatch<React.SetStateAction<boolean>>;
   chain: Chain;
   proxyItems: ProxyItem[];
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | undefined>>;
   onChange: () => void;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface DropdownOption {
@@ -38,7 +38,7 @@ const isEqualProxy = (a: Proxy, b: Proxy) => {
   return a.delay === b.delay && a.delegate === b.delegate && a.proxyType === b.proxyType;
 };
 
-export default function AddProxy ({ address, api, chain, onChange, proxyItems, setProxyItems, setShowAddProxy, showAddProxy }: Props): React.ReactElement {
+export default function AddProxy({ address, api, chain, onChange, proxyItems, setProxyItems, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
   const formatted = useFormatted(address);
@@ -49,7 +49,7 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
   const [realAddress, setRealAddress] = useState<string | undefined>();
   const [selectedProxyType, setSelectedProxyType] = useState<string | null>('Any');
   const [delay, setDelay] = useState<number>(0);
-  const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
+  // const [addButtonDisabled, setAddButtonDisabled] = useState<boolean>(true);
 
   const proxyAccountIdentity = useAccountInfo2(api, realAddress);
 
@@ -66,39 +66,31 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
 
   const allAddresses = getAllAddresses(hierarchy, true, true, chain.ss58Format, address);
 
-  const _addProxy = useCallback(() => {
+  const addButtonDisabled = useMemo(() => {
+    if (!realAddress || !selectedProxyType || myselfAsProxy || alreadyExisting) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [alreadyExisting, myselfAsProxy, realAddress, selectedProxyType]);
+
+  const addProxy = useCallback(() => {
     const proxy = { delay, delegate: realAddress, proxyType: selectedProxyType } as Proxy;
 
     setProxyItems([{ proxy, status: 'new' }, ...proxyItems]);
-    setShowAddProxy(!showAddProxy);
+    setStep(STEPS.INDEX);
     onChange();
-  }, [delay, onChange, proxyItems, realAddress, selectedProxyType, setProxyItems, setShowAddProxy, showAddProxy]);
+  }, [delay, onChange, proxyItems, realAddress, selectedProxyType, setProxyItems, setStep]);
 
-  const _selectProxyType = useCallback((type: string | number): void => {
+  const selectProxyType = useCallback((type: string | number): void => {
     setSelectedProxyType(type as string);
   }, []);
 
-  const _selectDelay = useCallback((value: string): void => {
+  const selectDelay = useCallback((value: string): void => {
     const nDelay = value ? parseInt(value.replace(/\D+/g, ''), 10) : 0;
 
     setDelay(nDelay);
   }, []);
-
-  useEffect(() => {
-    if (!realAddress || !selectedProxyType || myselfAsProxy) {
-      setAddButtonDisabled(true);
-
-      return;
-    }
-
-    if (alreadyExisting) {
-      setAddButtonDisabled(true);
-
-      return;
-    }
-
-    setAddButtonDisabled(false);
-  }, [alreadyExisting, myselfAsProxy, realAddress, selectedProxyType]);
 
   return (
     <>
@@ -123,7 +115,7 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
           defaultValue={proxyTypeOptions[0].value}
           helperText={t('The permissions allowed for this proxy account')}
           label={t('Proxy type')}
-          onChange={_selectProxyType}
+          onChange={selectProxyType}
           options={proxyTypeOptions}
           value={selectedProxyType || proxyTypeOptions[0].value}
         />
@@ -133,7 +125,7 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
           <InputWithLabel
             helperText={t('The announcement period required of the initial proxy. Generally will be zero.')}
             label={t('Delay')}
-            onChange={_selectDelay}
+            onChange={selectDelay}
             value={delay.toString()}
           />
         </Grid>
@@ -163,7 +155,7 @@ export default function AddProxy ({ address, api, chain, onChange, proxyItems, s
         </Grid>
       }
       <PButton
-        _onClick={_addProxy}
+        _onClick={addProxy}
         disabled={addButtonDisabled}
         text={t('Add')}
       />

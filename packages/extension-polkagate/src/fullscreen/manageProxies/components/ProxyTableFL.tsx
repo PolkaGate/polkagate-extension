@@ -129,7 +129,7 @@ export default function ProxyTableFL ({ api, chain, handleDelete, labelAlignment
             {proxyItems === undefined &&
               <Progress pt='20px' size={50} title={t('looking for proxies...')} />
             }
-            {proxyItems === null &&
+            {(proxyItems === null || proxyItems?.length === 0) &&
               <Grid display='inline-flex' m='auto' py='30px'>
                 <FontAwesomeIcon fontSize={22} icon={faExclamationTriangle} />
                 <Typography fontSize='14px' fontWeight={400} lineHeight='20px' pl='8px'>
