@@ -14,7 +14,7 @@ import { Chain } from '@polkadot/extension-chains/types';
 import keyring from '@polkadot/ui-keyring';
 import { BN, BN_ONE } from '@polkadot/util';
 
-import { ActionContext, CanPayErrorAlert, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
+import { ActionContext, CanPayErrorAlert, ExtensionSignArea, PasswordUseProxyConfirm, ProxyTable, ShowBalance, WrongPasswordAlert } from '../../components';
 import { useAccount, useAccountDisplay, useCanPayFeeAndDeposit } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { SubTitle, WaitScreen } from '../../partials';
@@ -93,6 +93,15 @@ export default function Review({ address, api, chain, depositToPay, depositValue
     void tx.paymentInfo(formatted).then((i) => setEstimatedFee(i?.partialFee));
   }, [api, formatted, tx]);
 
+  const ptx = useMemo(() => {
+    return selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
+  }, [api.tx.proxy, formatted, selectedProxy, tx]);
+
+  const extraInfo = {
+    action: 'Manage Proxy',
+    subAction: 'Add/Remove Proxy'
+  };
+
   const onNext = useCallback(async (): Promise<void> => {
     try {
       const from = selectedProxy?.delegate ?? formatted;
@@ -101,9 +110,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
       signer.unlock(password);
       setShowWaitScreen(true);
 
-      const decidedTx = selectedProxy ? api.tx.proxy.proxy(formatted, selectedProxy.proxyType, tx) : tx;
-
-      const { block, failureText, fee, success, txHash } = await signAndSend(api, decidedTx, signer, selectedProxy?.delegate ?? formatted);
+      const { block, failureText, fee, success, txHash } = await signAndSend(api, ptx, signer, selectedProxy?.delegate ?? formatted);
 
       const info = {
         action: 'Manage Proxy',
@@ -127,7 +134,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
       console.log('error:', e);
       setIsPasswordError(true);
     }
-  }, [api, chain, estimatedFee, formatted, name, password, selectedProxy, selectedProxyAddress, selectedProxyName, tx]);
+  }, [api, chain, estimatedFee, formatted, name, password, ptx, selectedProxy?.delegate, selectedProxyAddress, selectedProxyName]);
 
   useEffect(() => {
     const addingLength = proxies.filter((item) => item.status === 'new').length;
@@ -184,7 +191,7 @@ export default function Review({ address, api, chain, depositToPay, depositValue
           </Grid>
         </Grid>
         <Divider orientation='vertical' sx={{ backgroundColor: 'secondary.main', height: '30px', mx: '5px', my: 'auto' }} />
-        <Grid display='inline-flex' item >
+        <Grid display='inline-flex' item>
           <Typography fontSize='14px' fontWeight={300} lineHeight='23px'>
             {t<string>('Fee:')}
           </Typography>
@@ -198,10 +205,10 @@ export default function Review({ address, api, chain, depositToPay, depositValue
           </Grid>
         </Grid>
       </Grid>
-      <PasswordUseProxyConfirm
+      <ExtensionSignArea
         api={api}
-        // estimatedFee={estimatedFee}
-        disabled={canPayFeeAndDeposit.isAbleToPay !== true}
+        disabled={canPayFeeAndDeposit.isAbleToPay !== true || !ptx}
+        extraInfo={extraInfo}
         genesisHash={account?.genesisHash}
         isPasswordError={isPasswordError}
         label={t<string>('Password for {{name}}', { replace: { name: selectedProxyName || name || '' } })}
@@ -210,9 +217,14 @@ export default function Review({ address, api, chain, depositToPay, depositValue
         proxiedAddress={address}
         proxies={proxies}
         proxyTypeFilter={['Any', 'NonTransfer']}
+        ptx={ptx}
         selectedProxy={selectedProxy}
+        senderAddress={formatted}
         setIsPasswordError={setIsPasswordError}
         setSelectedProxy={setSelectedProxy}
+        setShowConfirmation={setShowConfirmation}
+        setShowWaitScreen={setShowWaitScreen}
+        setTxInfo={setTxInfo}
         style={{
           bottom: '80px',
           left: '4%',
