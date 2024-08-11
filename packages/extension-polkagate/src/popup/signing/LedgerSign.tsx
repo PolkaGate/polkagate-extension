@@ -18,7 +18,7 @@ interface Props {
   accountIndex?: number;
   addressOffset?: number;
   className?: string;
-  error: string | null;
+  error: string | null | undefined;
   genesisHash?: string;
   onSignature?: ({ signature }: { signature: HexString }) => void;
   payload?: ExtrinsicPayload;

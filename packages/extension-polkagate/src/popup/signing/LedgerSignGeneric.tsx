@@ -3,44 +3,47 @@
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import type { HexString } from '@polkadot/util/types';
-import { Grid, useTheme } from '@mui/material';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import styled from 'styled-components';
-import { PButton, Warning } from '../../components';
-import useTranslation from '../../hooks/useTranslation';
-import { useGenericLedger, useInfo, useMetadataProof } from '../../hooks';
-import ledgerChains from '../../util/legerChains';
-import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { LedgerSignature } from '@polkadot/hw-ledger/types';
 import type { GenericExtrinsicPayload } from '@polkadot/types';
+import type { SignerPayloadJSON } from '@polkadot/types/types';
+import type { HexString } from '@polkadot/util/types';
+
+import { Grid, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useMemo,useState } from 'react';
+import styled from 'styled-components';
+
+import { PButton, Warning } from '../../components';
+import { useGenericLedger, useInfo, useMetadataProof } from '../../hooks';
+import useTranslation from '../../hooks/useTranslation';
+import ledgerChains from '../../util/legerChains';
 
 interface Props {
   accountIndex?: number;
   address: string | undefined;
   addressOffset?: number;
   className?: string;
-  error: string | null;
+  error: string | null | undefined;
   onSignature?: (signature: HexString, raw?: GenericExtrinsicPayload) => void;
   payload?: SignerPayloadJSON;
   setError: (value: string | null) => void;
   showError?: boolean;
 }
 
-function LedgerSignGeneric({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric ({ accountIndex, address, addressOffset, error, onSignature, payload, setError, showError = true }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { api, account } = useInfo(address);
+  const { account, api } = useInfo(address);
   const metadataProof = useMetadataProof(api, payload);
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
   const chainSlip44 = useMemo(() => {
     if (account?.genesisHash) {
-      return ledgerChains.find(({ genesisHash }) => genesisHash.includes(account.genesisHash as any))?.slip44 ?? null
+      return ledgerChains.find(({ genesisHash }) => genesisHash.includes(account.genesisHash as HexString))?.slip44 ?? null;
     }
+
     return null;
-  }, [account, ledgerChains]);
+  }, [account]);
 
   const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
