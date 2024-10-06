@@ -1,15 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { SoloSettings, StakingConsts } from '../../../../util/types';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Grid, IconButton } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { SlidePopUp } from '../../../../components';
-import type { SoloSettings, StakingConsts } from '../../../../util/types';
 import SetPayeeController from './partials/SetPayeeController';
 import SettingsHeader from './partials/SettingsHeader';
 

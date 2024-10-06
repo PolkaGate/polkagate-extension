@@ -44,7 +44,7 @@ export default function getLogo2 (info: string | undefined | null | Chain, token
   let mayBeExternalLogo;
   const iconName = sanitizeChainName(chainNameFromGenesisHash || (info as Chain)?.name || (info as string))?.toLowerCase();
 
-  const endpoint = endpoints.find((o) => o.info?.toLowerCase() === iconName);
+  const endpoint = endpoints.find(({ info, text }) => info?.toLowerCase() === iconName || (text as string)?.replace(/\s/g, '')?.toLowerCase() === iconName);
 
   if (!endpoint) {
     mayBeExternalLogo = Object

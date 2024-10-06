@@ -6,6 +6,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useMemo } from 'react';
 
+import { useUserAddedEndpoint } from '../fullscreen/addNewChain/utils';
 import { KUSAMA_PEOPLE_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, RELAY_CHAINS_NAMES, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
 import getChain from '../util/getChain';
 import { sanitizeChainName } from '../util/utils';
@@ -31,7 +32,7 @@ const getPeopleChainGenesisHash = (chainName: string | undefined) => {
     case 'Kusama':
       return KUSAMA_PEOPLE_GENESIS_HASH;
     case 'Polkadot':
-      return POLKADOT_PEOPLE_GENESIS_HASH; // should be changed to POLKADOT_PEOPLE_GENESIS_HASH in the future
+      return POLKADOT_PEOPLE_GENESIS_HASH;
     case 'Paseo':
       return PASEO_GENESIS_HASH;
     default:
@@ -43,15 +44,17 @@ const allEndpoints = createWsEndpoints();
 
 export default function usePeopleChain (address: string | undefined, genesisHash?: string): PeopleChainInfo {
   const { chain } = useInfo(address);
+  const userAddedEndpoint = useUserAddedEndpoint(genesisHash);
+
   const _chain = chain || getChain(genesisHash);
   const _chainName = sanitizeChainName(_chain?.name);
 
   const peopleChainGenesisHash = getPeopleChainGenesisHash(_chainName);
 
-  const peopleChain = useMetadata(peopleChainGenesisHash, true);
+  const identityChain = useMetadata(peopleChainGenesisHash || genesisHash, true);
 
   const maybeEndpoint = useMemo(() => {
-    const peopleChainName = sanitizeChainName(peopleChain?.name as string);
+    const peopleChainName = sanitizeChainName(identityChain?.name);
 
     if (!peopleChainName) {
       return;
@@ -59,11 +62,15 @@ export default function usePeopleChain (address: string | undefined, genesisHash
 
     const endpoints = allEndpoints?.filter((e) => String(e.text)?.toLowerCase() === peopleChainName?.toLowerCase() || String(e.info)?.toLowerCase() === peopleChainName?.toLowerCase());
 
+    if (!endpoints?.length && userAddedEndpoint) {
+      return userAddedEndpoint[0].value as string;
+    }
+
     return endpoints?.length ? endpoints[0].value : undefined;
-  }, [peopleChain]);
+  }, [identityChain?.name, userAddedEndpoint]);
 
   return {
     endpoint: maybeEndpoint,
-    peopleChain
+    peopleChain: identityChain
   };
 }

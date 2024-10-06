@@ -37,7 +37,9 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
 
     const endpoints = allEndpoints?.filter((e) => e.value &&
       (String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
-        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase() ?? ''))
+        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase() ?? '') ||
+        String(e.text)?.replace(/\s/g, '')?.toLowerCase() === chainName?.toLowerCase()
+      )
     );
 
     if (!endpoints) {

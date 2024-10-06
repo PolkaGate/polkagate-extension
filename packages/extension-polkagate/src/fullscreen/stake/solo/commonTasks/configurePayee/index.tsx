@@ -128,7 +128,7 @@ export default function ConfigurePayee ({ address, setRefresh, setShow, show }: 
 
     setRewardDestinationValue(payee === 'Staked' ? 'Staked' : 'Others');
 
-    return ({ payee, stashId: parsedStakingAccount.stashId });
+    return ({ payee, stashId: parsedStakingAccount.stashId as unknown as string });
   }, [stakingAccount]);
 
   const getOptionLabel = useCallback((s: SoloSettings): 'Staked' | 'Others' => s?.payee === 'Staked' ? 'Staked' : 'Others', []);

@@ -1,6 +1,5 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
@@ -9,19 +8,20 @@
  * this component opens stake review page
  * */
 
+import type { SoloSettings } from '../../../../../util/types';
+
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
 import { ShortAddress } from '../../../../../components';
 import { useAccountName, useMyAccountIdentity, useTranslation } from '../../../../../hooks';
-import type { SoloSettings } from '../../../../../util/types';
 import getPayee from './util';
 
 interface Props {
   settings: SoloSettings
 }
 
-export default function RewardsDestination({ settings }: Props): React.ReactElement {
+export default function RewardsDestination ({ settings }: Props): React.ReactElement {
   const { t } = useTranslation();
   const address = getPayee(settings);
   const payeeName = useAccountName(address);

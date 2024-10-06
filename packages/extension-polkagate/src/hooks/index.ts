@@ -66,7 +66,6 @@ export { default as useMinToReceiveRewardsInSolo2 } from './useMinToReceiveRewar
 export { default as useMyAccountIdentity } from './useMyAccountIdentity';
 export { default as useMyPools } from './useMyPools';
 export { default as useMyVote } from './useMyVote';
-export { default as useNativeTokenPrice } from './useNativeTokenPrice';
 export { default as useNeedsPutInFrontOf } from './useNeedsPutInFrontOf';
 export { default as useNeedsRebag } from './useNeedsRebag';
 export { default as useNotifyOnChainChange } from './useNotifyOnChainChange';

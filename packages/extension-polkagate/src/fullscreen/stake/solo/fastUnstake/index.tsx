@@ -16,7 +16,7 @@ import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/gov
 import WaitScreen from '@polkadot/extension-polkagate/src/fullscreen/governance/partials/WaitScreen';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
-import { BN, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
+import { BN, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import { PButton, Progress, Warning } from '../../../../components';
 import { useBalances, useInfo, useIsExposed, useStakingAccount, useStakingConsts, useTranslation } from '../../../../hooks';
@@ -48,7 +48,7 @@ export default function FastUnstake ({ address, setRefresh, setShow, show }: Pro
   const [inputs, setInputs] = useState<StakingInputs>();
 
   const redeemable = useMemo(() => stakingAccount?.redeemable, [stakingAccount?.redeemable]);
-  const fastUnstakeDeposit = api && api.consts['fastUnstake']['deposit'] as unknown as BN;
+  const fastUnstakeDeposit = api && (api.consts['fastUnstake']?.['deposit'] as unknown as BN || BN_ZERO);
   const availableBalance = getValue('available', myBalances);
   const hasEnoughDeposit = fastUnstakeDeposit && stakingConsts && myBalances && estimatedFee && availableBalance
     ? new BN(fastUnstakeDeposit).add(estimatedFee).lt(availableBalance || BN_MAX_INTEGER)

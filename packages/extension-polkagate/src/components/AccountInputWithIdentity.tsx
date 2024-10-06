@@ -1,34 +1,31 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Chain } from '@polkadot/extension-chains/types';
 
 import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 
-import type { Chain } from '@polkadot/extension-chains/types';
-
-
 import { useApi, useTranslation } from '../hooks';
 import getAllAddresses from '../util/getAllAddresses';
 import { AccountContext, AddressInput, Identity } from '.';
-import type { AccountId } from '@polkadot/types/interfaces';
 
 interface Props {
   address: string | null | undefined;
   chain: Chain | null | undefined;
   label: string;
   style?: SxProps<Theme>;
-  setAddress: React.Dispatch<React.SetStateAction<string | AccountId | undefined | null>> | null;
+  setAddress?: React.Dispatch<React.SetStateAction<string | undefined | null>>;
   ignoreAddress?: string
   name?: string;
   helperText?: string;
   disabled?: boolean;
 }
 
-export default function AccountInputWithIdentity({ address, chain, disabled, helperText, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
+export default function AccountInputWithIdentity ({ address, chain, disabled, helperText, ignoreAddress, label, name, setAddress, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const { t } = useTranslation();
   const { hierarchy } = useContext(AccountContext);
@@ -39,9 +36,9 @@ export default function AccountInputWithIdentity({ address, chain, disabled, hel
   return (
     <Grid alignItems='flex-end' container justifyContent='space-between' sx={{ ...style }}>
       <AddressInput
-        address={address as string}
+        address={address}
         allAddresses={allAddresses}
-        chain={chain as any}
+        chain={chain}
         disabled={disabled}
         helperText={helperText}
         label={label}
@@ -53,11 +50,11 @@ export default function AccountInputWithIdentity({ address, chain, disabled, hel
         <Grid alignItems='center' container item sx={{ bgcolor: 'background.paper', border: 1, borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px', borderColor: theme.palette.secondary.light, borderTop: 0, fontSize: '28px', fontWeight: 400, letterSpacing: '-0.015em', maxWidth: '100%', mt: '-4px', pl: '7px', pt: '8px' }} xs={12}>
           <Identity
             api={api}
-            chain={chain as any}
+            chain={chain}
             formatted={address}
             identiconSize={31}
             name={name}
-            style={{ maxWidth: '100%', width: 'fit-content', height: '51px' }}
+            style={{ height: '51px', maxWidth: '100%', width: 'fit-content' }}
           />
         </Grid>
       }

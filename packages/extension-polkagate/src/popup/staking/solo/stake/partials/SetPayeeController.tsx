@@ -1,17 +1,15 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
+
+import type { Payee, SoloSettings, StakingConsts } from '../../../../../util/types';
 
 import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, type SxProps, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import type { AccountId } from '@polkadot/types/interfaces/runtime';
-
 import { AccountInputWithIdentity, PButton, Warning } from '../../../../../components';
 import { useInfo, useTranslation } from '../../../../../hooks';
-import type { Payee, SoloSettings, StakingConsts } from '../../../../../util/types';
 import { amountToHuman } from '../../../../../util/utils';
 import getPayee from './util';
 
@@ -26,14 +24,14 @@ interface Props {
   newSettings?: SoloSettings; // will be used when user is already has staked
 }
 
-export default function SetPayeeController({ address, buttonLabel, newSettings, set, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
+export default function SetPayeeController ({ address, buttonLabel, newSettings, set, setShow, setShowReview, settings, stakingConsts }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, chain, decimal, formatted, token } = useInfo(address);
 
-  const [controllerId, setControllerId] = useState<AccountId | string | undefined | null>(settings.controllerId);
+  const [controllerId, setControllerId] = useState< string | undefined | null>(settings.controllerId);
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>(settings.payee === 'Staked' ? 'Staked' : 'Others');
-  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<AccountId | string | null | undefined>(getPayee(settings));
+  const [rewardDestinationAccount, setRewardDestinationAccount] = useState< string | null | undefined>(getPayee(settings));
 
   const isSettingAtBonding = useMemo(() => !newSettings, [newSettings]);
 
@@ -70,6 +68,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
     if (rewardDestinationAccount) {
       return { Account: rewardDestinationAccount };
     }
+
     return undefined;
   }, [controllerId, settings.controllerId, settings.stashId]);
 
@@ -110,7 +109,7 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
     !setShowReview && setShow(false); // can be left open when settings accessed from home
   }, [controllerId, isSettingAtBonding, makePayee, rewardDestinationAccount, rewardDestinationValue, set, setShow, setShowReview, settings]);
 
-  const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
+  const Warn = ({ style = {}, text }: { text: string, style?: SxProps }) => (
     <Grid container justifyContent='center' sx={style}>
       <Warning
         fontWeight={400}
@@ -126,11 +125,11 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
       {!isSettingAtBonding && formatted === settings.stashId && formatted !== controllerId &&
         <>
           <AccountInputWithIdentity
-            address={controllerId as string}
-            chain={chain as any}
+            address={controllerId}
+            chain={chain}
             disabled={isControllerDeprecated}
             label={isControllerDeprecated ? t('Controller account is deprecated') : t('Controller account')}
-            setAddress={isControllerDeprecated ? null : setControllerId}
+            setAddress={isControllerDeprecated ? undefined : setControllerId}
             style={{ pt: '10px', px: '15px' }}
           />
           {needToSetControllerToStashID &&
@@ -161,8 +160,8 @@ export default function SetPayeeController({ address, buttonLabel, newSettings, 
           {rewardDestinationValue === 'Others' &&
             <>
               <AccountInputWithIdentity
-                address={rewardDestinationAccount as string}
-                chain={chain as any}
+                address={rewardDestinationAccount}
+                chain={chain}
                 label={t('Specific account')}
                 setAddress={setRewardDestinationAccount}
                 style={{ pt: '15px', px: '15px' }}

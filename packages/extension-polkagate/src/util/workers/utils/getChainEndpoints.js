@@ -13,7 +13,15 @@ export function getChainEndpoints (chainName, userAddedEndpoints) {
   const allEndpoints = createWsEndpoints();
 
   let endpoints = allEndpoints
-    .filter((endpoint) => endpoint.info && endpoint.info.toLowerCase() === chainName.toLowerCase() && !endpoint.isDisabled && !endpoint?.isLightClient);
+    .filter((endpoint) =>
+      endpoint.info &&
+      (
+        endpoint.info.toLowerCase() === chainName.toLowerCase() ||
+        //@ts-ignore
+        endpoint.text?.replace(/\s/g, '')?.toLowerCase() === chainName.toLowerCase()
+      ) &&
+      !endpoint.isDisabled && !endpoint?.isLightClient
+    );
 
   if (!endpoints.length && userAddedEndpoints) {
     const maybeEndpoint = Object.entries(userAddedEndpoints).find(([_, { chain }]) => chain?.replace(/\s/g, '')?.toLowerCase() === chainName.toLowerCase());

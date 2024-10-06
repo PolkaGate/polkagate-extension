@@ -40,7 +40,7 @@ export default function Send(): React.ReactElement {
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
-  const [recipientAddress, setRecipientAddress] = useState<AccountId | string | null | undefined>();
+  const [recipientAddress, setRecipientAddress] = useState<string | null | undefined>();
   const recipientNameIfIsInExtension = useAccountName(recipientAddress as string);
   const recipientInfo = useIdentity(genesisHash, recipientAddress as string);
   const [amount, setAmount] = useState<string>();
@@ -178,8 +178,8 @@ export default function Send(): React.ReactElement {
           title={t<string>('From')}
         />
         <AccountInputWithIdentity
-          address={recipientAddress as string}
-          chain={chain as any}
+          address={recipientAddress}
+          chain={chain}
           ignoreAddress={formatted}
           label={t('To')}
           name={recipientName}

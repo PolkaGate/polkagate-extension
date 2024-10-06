@@ -55,12 +55,12 @@ export default function ValidatorsTableFS ({ activeValidators, address, allValid
     }
 
     const threshold = stakingConsts.maxNominatorRewardedPerValidator;
-    const sortedNominators = v.exposure.others?.sort((a: any, b: any) => b.value - a.value);
+    const sortedNominators = v.exposure?.others?.sort((a: any, b: any) => b.value - a.value);
     const maybeMyIndex = staked ? sortedNominators?.findIndex((n: any) => new BN(isHex(n.value) ? hexToBn(n.value) : String(n.value)).lt(staked)) : -1;
 
     return {
-      notSafe: v.exposure.others?.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),
-      safe: v.exposure.others?.length > threshold && (maybeMyIndex < threshold || maybeMyIndex === -1)
+      notSafe: v.exposure?.others?.length > threshold && (maybeMyIndex > threshold || maybeMyIndex === -1),
+      safe: v.exposure?.others?.length > threshold && (maybeMyIndex < threshold || maybeMyIndex === -1)
     };
   }, [staked, stakingConsts]);
 

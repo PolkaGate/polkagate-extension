@@ -79,7 +79,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
           {t('Staked')}:
         </Grid>
         <Grid fontSize='14px' fontWeight={400} item pl='3px'>
-          {isHexToBn(v.exposure.total.toString()).gt(BN_ZERO)
+          {!!v.exposure && isHexToBn(v.exposure.total.toString()).gt(BN_ZERO)
             ? <ShowBalance
               api={api}
               balance={v.exposure.total}
@@ -89,7 +89,17 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
               skeletonWidth={50}
               token={token}
             />
-            : t('waiting')
+            : !v.exposure && v.stakingLedger.total && isHexToBn(v.stakingLedger.total.toString()).gt(BN_ZERO)
+              ? <ShowBalance
+                api={api}
+                balance={isHexToBn(v.stakingLedger.total.toString())}
+                decimal={decimal}
+                decimalPoint={1}
+                height={15}
+                skeletonWidth={50}
+                token={token}
+              />
+              : t('waiting')
           }
         </Grid>
       </Grid>
@@ -108,7 +118,7 @@ function ShowValidator ({ accountInfo, allInOneRow = true, api, chain, check, de
           {t('Nominators')}:
         </Grid>
         <Grid fontSize='14px' fontWeight={400} item lineHeight='22px' pl='3px'>
-          {v.exposure.others?.length || t('N/A')}
+          {v.exposure?.others?.length || t('N/A')}
         </Grid>
       </Grid>
       <Grid alignItems='center' container item justifyContent='flex-end' sx={{ lineHeight: '23px', pl: '2px' }} width='fit-content'>

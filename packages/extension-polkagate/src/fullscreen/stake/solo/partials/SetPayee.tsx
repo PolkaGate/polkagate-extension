@@ -1,13 +1,14 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
 
 /* eslint-disable react/jsx-max-props-per-line */
 
-import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Skeleton, SxProps, Typography, useTheme } from '@mui/material';
+import type { SxProps } from '@mui/material';
+import type { Payee } from '@polkadot/extension-polkagate/src/util/types';
+
+import { FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Payee } from '@polkadot/extension-polkagate/src/util/types';
 import { amountToHuman } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { AccountInputWithIdentity, Warning } from '../../../../components';
@@ -19,7 +20,7 @@ interface Props {
   set: React.Dispatch<React.SetStateAction<Payee | undefined>>
 }
 
-export default function SetPayee({ address, set, title }: Props): React.ReactElement<Props> {
+export default function SetPayee ({ address, set, title }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const { chain, decimal, formatted, token } = useInfo(address);
@@ -27,19 +28,19 @@ export default function SetPayee({ address, set, title }: Props): React.ReactEle
   const stakingConsts = useStakingConsts(address);
 
   const [rewardDestinationValue, setRewardDestinationValue] = useState<'Staked' | 'Others'>('Staked');
-  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string>();
+  const [rewardDestinationAccount, setRewardDestinationAccount] = useState<string | null>();
 
   const ED = useMemo(() => stakingConsts?.existentialDeposit && decimal && amountToHuman(stakingConsts.existentialDeposit, decimal), [decimal, stakingConsts?.existentialDeposit]);
 
-  const onSelectionMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, value: 'Staked' | 'Others'): void => {
-    setRewardDestinationValue(value);
+  const onSelectionMethodChange = useCallback((_event: React.ChangeEvent<HTMLInputElement>, value: string): void => {
+    setRewardDestinationValue(value as 'Staked' | 'Others');
 
     if (value === 'Staked') {
       setRewardDestinationAccount(undefined);// to reset
     }
   }, []);
 
-  const makePayee = useCallback((value: 'Staked' | 'Others', account?: string) => {
+  const makePayee = useCallback((value: 'Staked' | 'Others', account?: string | null) => {
     if (value === 'Staked') {
       return 'Staked';
     }
@@ -65,7 +66,7 @@ export default function SetPayee({ address, set, title }: Props): React.ReactEle
     set(newPayee);
   }, [makePayee, rewardDestinationAccount, rewardDestinationValue, set]);
 
-  const Warn = ({ text, style = {} }: { text: string, style?: SxProps }) => (
+  const Warn = ({ style = {}, text }: { text: string, style?: SxProps }) => (
     <Grid container justifyContent='center' sx={style}>
       <Warning
         fontWeight={400}
@@ -91,7 +92,7 @@ export default function SetPayee({ address, set, title }: Props): React.ReactEle
             : <Skeleton
               animation='wave'
               height={20}
-              sx={{ display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '200px', mt: '10px' }}
+              sx={{ display: 'inline-block', fontWeight: 'bold', mt: '10px', transform: 'none', width: '200px' }}
             />
           }
         </FormControl>
@@ -100,7 +101,7 @@ export default function SetPayee({ address, set, title }: Props): React.ReactEle
         <>
           <AccountInputWithIdentity
             address={rewardDestinationAccount}
-            chain={chain as any}
+            chain={chain}
             label={t('Specific account')}
             setAddress={setRewardDestinationAccount}
             style={{ pt: '25px', px: '15px' }}

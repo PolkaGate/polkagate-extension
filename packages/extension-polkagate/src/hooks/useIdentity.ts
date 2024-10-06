@@ -28,7 +28,7 @@ export default function useIdentity (genesisHash: string | undefined, formatted:
     }
 
     const i = await api.query['identity']['identityOf'](accountId) as any;
-    const id = i.isSome ? i.unwrap()[0] as PalletIdentityRegistration : null;
+    const id = i.isSome ? i.unwrap()[0] || i.unwrap() as PalletIdentityRegistration : null;
 
     return id?.info
       ? {

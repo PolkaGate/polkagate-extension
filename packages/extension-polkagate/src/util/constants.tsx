@@ -25,7 +25,6 @@ export const POLKAGATE_POOL_IDS: Record<string, number> = {
 
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
 export const AUCTION_GRACE_PERIOD = 27000;// blocks
-export const MAX_NOMINATIONS = 16;
 export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
@@ -37,13 +36,12 @@ export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 
-export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
+export const CHAINS_WITH_BLACK_LOGO = ['AlephZero', 'statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
 export const TOKENS_WITH_BLACK_LOGO = ['KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi', 'Peaq Network', 'Genshiro Network'];
 
 export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
-
 export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9';
 export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
@@ -53,6 +51,8 @@ export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdf
 export const KUSAMA_PEOPLE_GENESIS_HASH = '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f';
 export const WESTEND_PEOPLE_GENESIS_HASH = '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c';
 
+export const ALEPH_ZERO_GENESIS_HASH = '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e';
+export const ALEPH_ZERO_TESTNET_GENESIS_HASH = '0x05d5279c52c484cc80396535a316add7d47b1c5b9e0398dd1f584149341460c5';
 
 /** relay chains info */
 export const RELAY_CHAINS_NAMES = ['Polkadot', 'Kusama', 'Westend', 'Paseo'];
@@ -81,7 +81,8 @@ export const TEST_NETS = [
   WESTMINT_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
   PASEO_GENESIS_HASH,
-  PASEO_ASSET_HUB_GENESIS_HASH
+  PASEO_ASSET_HUB_GENESIS_HASH,
+  ALEPH_ZERO_TESTNET_GENESIS_HASH
 ];
 
 export const PROXY_CHAINS = [
@@ -110,10 +111,9 @@ export const SOCIAL_RECOVERY_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
-  WESTEND_GENESIS_HASH,
-  PASEO_GENESIS_HASH
+  ...RELAY_CHAINS_GENESISHASH,
+  ALEPH_ZERO_GENESIS_HASH,
+  ALEPH_ZERO_TESTNET_GENESIS_HASH
 ];
 
 export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
