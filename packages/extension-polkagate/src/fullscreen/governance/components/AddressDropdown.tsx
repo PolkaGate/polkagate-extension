@@ -26,6 +26,7 @@ interface Props {
 export default function AddressDropdown ({ api, chainGenesis, inHeading, onSelect, selectedAddress, unableToChangeAccount = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
+  const isDarkMode = theme.palette.mode === 'dark';
   const { accounts } = useContext(AccountContext);
   const chain = useChain(selectedAddress);
   const ref = useRef<HTMLDivElement>(null);
@@ -44,7 +45,7 @@ export default function AddressDropdown ({ api, chainGenesis, inHeading, onSelec
 
   return (
     <Grid container style={{ position: 'relative' }}>
-      <Grid container sx={{ border: inHeading ? 2 : 1, borderColor: inHeading ? 'divider' : 'secondary.light', borderRadius: '5px', color: 'white' }}>
+      <Grid container sx={{ border: inHeading && isDarkMode ? 2 : 1, borderColor: inHeading ? 'divider' : 'secondary.light', borderRadius: '5px', color: 'white' }}>
         <Grid alignItems='center' container item justifyContent='space-around' maxWidth='calc(100% - 40px)' width='fit-content'>
           <Identity
             address={selectedAddress}
@@ -64,7 +65,7 @@ export default function AddressDropdown ({ api, chainGenesis, inHeading, onSelec
           />
         </Grid>
         {!unableToChangeAccount &&
-          <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: inHeading ? 2 : 1, borderLeftColor: inHeading ? 'divider' : 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
+          <Grid alignItems='center' container item onClick={toggleDropdown} ref={ref} sx={{ borderLeft: inHeading && isDarkMode ? 2 : 1, borderLeftColor: inHeading ? 'divider' : 'secondary.light', cursor: 'pointer', px: '10px', width: '40px' }}>
             <ArrowForwardIosIcon sx={{ color: 'secondary.light', fontSize: 18, m: 'auto', stroke: theme.palette.secondary.light, strokeWidth: '2px', transform: isDropdownVisible ? 'rotate(-90deg)' : 'rotate(90deg)', transitionDuration: '0.3s', transitionProperty: 'transform' }} />
           </Grid>
         }

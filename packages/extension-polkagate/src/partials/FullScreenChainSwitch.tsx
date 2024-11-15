@@ -97,6 +97,8 @@ const NetworkList = React.memo(function NetworkList ({ address, chains, selected
 
 function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
   const { chainName: chainNameFromAccount, genesisHash } = useInfo(address);
 
   const [selectedChainName, setSelectedChainName] = useState<string>();
@@ -125,7 +127,7 @@ function FullScreenChainSwitch ({ address, chains }: Props): React.ReactElement<
 
   return (
     <Grid container item>
-      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: '2px solid', borderColor: 'divider', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
+      <Grid aria-describedby={id} component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: isDarkMode ? 2 : 1, borderColor: 'divider', borderRadius: '50%', cursor: 'pointer', height: '40px', p: 0, width: '40px' }}>
         {selectedChainName &&
          <Box
            sx={{

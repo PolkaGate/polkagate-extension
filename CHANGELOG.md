@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.29.1](https://github.com/polkagate/extension/compare/v0.29.0...v0.29.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* adjust width in HEADER_COMPONENT_STYLE ([07d2d09](https://github.com/polkagate/extension/commit/07d2d0945159a617ddfd9d2252669f91fd01ec42))
+
 # [0.29.0](https://github.com/polkagate/extension/compare/v0.28.0...v0.29.0) (2024-11-12)
 
 

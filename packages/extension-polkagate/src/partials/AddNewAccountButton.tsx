@@ -28,7 +28,7 @@ export default function AddNewAccountButton (): React.ReactElement {
     <Grid alignItems='center' container justifyContent='space-between' onClick={onCreate} sx={{ '&:hover': { opacity: 1 }, backgroundColor: 'background.paper', borderRadius: '10px', bottom: '20px', cursor: 'pointer', my: isExtensionMode ? '10px' : '20px', opacity: '0.7', padding: 'min(3%, 20px) min(5%, 40px)', position: isExtensionMode ? 'absolute' : 'relative', transition: 'opacity 0.3s ease', width: isExtensionMode ? '92%' : 'inherit', zIndex: 1 }}>
       <Grid container item width='fit-content'>
         <Grid item width='fit-content'>
-          <VaadinIcon icon='vaadin:plus-circle' style={{ height: '36px', color: `${theme.palette.secondary.light}`, width: '36px' }} />
+          <VaadinIcon icon='vaadin:plus-circle' style={{ color: `${theme.palette.secondary.light}`, height: '26px', width: '26px' }} />
         </Grid>
         <Grid alignItems='center' container item textAlign='left' width='fit-content'>
           <Typography fontSize='18px' fontWeight={500} pl='8px'>

@@ -33,9 +33,10 @@ export const HEADER_COMPONENT_STYLE = {
   borderRadius: '5px',
   cursor: 'pointer',
   height: '42px',
+  minWidth: '42px',
   overflow: 'hidden',
   position: 'relative',
-  width: '42px'
+  width: 'fit-content'
 };
 
 function FullScreenHeader ({ _otherComponents, noAccountDropDown = false, noChainSwitch = false, page, unableToChangeAccount }: Props): React.ReactElement {
