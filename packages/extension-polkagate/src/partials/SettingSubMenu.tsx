@@ -30,6 +30,9 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
 
   const [notification, updateNotification] = useState(settings.notification);
   const [camera, setCamera] = useState(settings.camera === 'on');
+  const [isSentryEnabled, setIsSentryEnabled] = useState(
+    localStorage.getItem('sentryEnabled') === 'true'
+  );
 
   const languageOptions = useMemo(() => getLanguageOptions(), []);
   const notificationOptions = useMemo(() => ['Extension', 'PopUp', 'Window'].map((item) => ({ text: item, value: item.toLowerCase() })), []);
@@ -63,6 +66,13 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
     setCamera(!camera);
   }, [camera]);
 
+  const toggleErrorReporting = useCallback(() => {
+    const newValue = !isSentryEnabled;
+
+    setIsSentryEnabled(newValue);
+    localStorage.setItem('sentryEnabled', newValue ? 'true' : 'false');
+  }, [isSentryEnabled]);
+
   useEffect(() => {
     getStorage('testnet_enabled').then((res) => {
       setTestnetEnabledChecked(!!res);
@@ -73,7 +83,7 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
     <Collapse easing={{ enter: '200ms', exit: '100ms' }} in={show} sx={{ width: '100%' }}>
       <Grid container item justifyContent='flex-end'>
         <Divider sx={{ bgcolor: 'divider', height: '1px', mx: '10px', width: '83%' }} />
-        <Grid container direction='column' pl='40px' pr='5px' pt='10px'>
+        <Grid container direction='column' height='320px' pl='40px' pr='5px' pt='10px'>
           <Grid item pt='5px' textAlign='left'>
             <Checkbox2
               checked={isTestnetEnabledChecked}
@@ -83,7 +93,16 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
               onChange={onChange}
             />
           </Grid>
-          <Grid item pt='15px' textAlign='left'>
+          <Grid item pt='10px' textAlign='left'>
+            <Checkbox2
+              checked={isSentryEnabled}
+              iconStyle={{ transform: 'scale(1.13)' }}
+              label={t('Enable error reporting')}
+              labelStyle={{ fontSize: '17px', fontWeight: 300, marginLeft: '7px' }}
+              onChange={toggleErrorReporting}
+            />
+          </Grid>
+          <Grid item pt='10px' textAlign='left'>
             <Checkbox2
               checked={camera}
               iconStyle={{ transform: 'scale(1.13)' }}
@@ -118,7 +137,7 @@ export default function SettingSubMenu ({ isTestnetEnabledChecked, onChange, set
             />
           </Grid>
           <SelectIdenticonTheme
-            style={{ pt: '12px', width: '100%' }}
+            style={{ pt: '3px', width: '100%' }}
           />
           <Grid item pt='10px'>
             <Select

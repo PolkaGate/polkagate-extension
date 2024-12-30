@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "apply-version": "node -e \"const { execSync } = require('child_process'); const fs = require('fs'); try { const version = execSync('git describe --tags --abbrev=0').toString().trim().replace(/^v/, ''); console.log('Version fetched:', version); const packageJsonPath = './packages/extension/package.json'; const packageJson = JSON.parse(fs.readFileSync(packageJsonPath)); packageJson.version = version; fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2)); } catch (error) { console.log('No tags found, skipping package.json update'); }\"",
-    "build": "yarn apply-version && polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
+    "build": "NODE_ENV=production yarn apply-version && polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
     "build:before": "yarn build:i18n",
     "build:i18n": "i18next-scanner --config i18next-scanner.config.cjs",
     "build:release": "polkadot-ci-ghact-build",
@@ -38,7 +38,7 @@
     "postinstall": "polkadot-dev-yarn-only",
     "prepare": "husky",
     "release": "semantic-release",
-    "start": "yarn watch",
+    "start": "NODE_ENV=development yarn watch",
     "test": "polkadot-dev-run-test --silent --detectOpenHandles --testPathPattern=packages/extension-polkagate/src --maxWorkers=1",
     "test:one": "polkadot-dev-run-test --detectOpenHandles",
     "watch": "cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"
@@ -69,6 +69,8 @@
     "@polkadot/util": "^13.2.3",
     "@polkadot/util-crypto": "^13.2.3",
     "@polkagate/apps-config": "^0.140.7",
+    "@sentry/react": "^8.42.0",
+    "@sentry/webpack-plugin": "^2.22.6",
     "@substrate/connect": "^0.7.32",
     "@vaadin/icons": "^23.2.3",
     "babel-plugin-transform-import-meta": "^2.1.1",

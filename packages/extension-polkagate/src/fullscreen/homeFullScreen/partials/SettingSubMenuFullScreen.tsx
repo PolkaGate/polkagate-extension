@@ -34,7 +34,9 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
   const [testnetWarning, setShowTestnetWarning] = useState<boolean>(false);
   const [showManageWebAccess, setShowManageWebAccess] = useState<boolean>(false);
   const [showManageLoginPassword, setShowManageLoginPassword] = useState<boolean>(false);
-
+  const [isSentryEnabled, setIsSentryEnabled] = useState(
+    localStorage.getItem('sentryEnabled') === 'true'
+  );
   const onEnableTestNetClick = useCallback(() => {
     !isEnableTestnetChecked && setShowTestnetWarning(true);
 
@@ -88,6 +90,13 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
     }).catch(console.error);
   }, [setIsTestnetEnabledChecked]);
 
+  const toggleErrorReporting = useCallback(() => {
+    const newValue = !isSentryEnabled;
+
+    setIsSentryEnabled(newValue);
+    localStorage.setItem('sentryEnabled', newValue ? 'true' : 'false');
+  }, [isSentryEnabled]);
+
   return (
     <>
       <Collapse in={show}>
@@ -105,6 +114,18 @@ export default function SettingSubMenuFullScreen ({ show }: Props): React.ReactE
               isSubMenu
               onClick={onEnableTestNetClick}
               text={t('Enable testnet chains')}
+            />
+            <TaskButton
+              icon={
+                <Box
+                  component='img'
+                  src={isSentryEnabled ? checkedBox as string : checkBox as string}
+                  sx={{ height: 20, width: 20 }}
+                />
+              }
+              isSubMenu
+              onClick={toggleErrorReporting}
+              text={t('Enable error reporting')}
             />
             <TaskButton
               icon={

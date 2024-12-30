@@ -10,8 +10,10 @@ const { blake2AsHex } = require('@polkadot/util-crypto');
 
 const pkgJson = require('./package.json');
 const manifest = require('./manifest.json');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 const Dotenv = require('dotenv-webpack');
+
 const envPath = path.resolve(__dirname, '../../', '.env');
 
 const EXT_NAME = manifest.short_name;
@@ -27,7 +29,7 @@ const packages = [
 
 module.exports = (entry, alias = {}) => ({
   context: __dirname,
-  devtool: false,
+  devtool: 'source-map', // Source map generation must be turned on
   entry,
   module: {
     rules: [
@@ -90,7 +92,7 @@ module.exports = (entry, alias = {}) => ({
     new webpack.DefinePlugin({
       'process.env': {
         EXTENSION_PREFIX: JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
-        NODE_ENV: JSON.stringify('production'),
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production'),
         PORT_PREFIX: JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64))
       }
     }),
@@ -103,7 +105,19 @@ module.exports = (entry, alias = {}) => ({
         }
       }
     }),
-    new Dotenv({ path: envPath })
+    new Dotenv({ path: envPath }),
+    // Put the Sentry Webpack plugin after all other plugins
+    ...(process.env.NODE_ENV === 'development'
+      ? []
+      : [sentryWebpackPlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        ipScrubbing: true,
+        org: 'polkagate',
+        project: 'extension',
+        sendDefaultPii: false,
+        telemetry: false
+      })]
+    )
   ],
   resolve: {
     alias: packages.reduce((alias, p) => ({
