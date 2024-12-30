@@ -265,6 +265,8 @@ export default function AccountDetails (): React.ReactElement {
                   <ReservedDisplayBalance
                     address={address}
                     amount={balancesToShow?.reservedBalance}
+                    assetId={assetId}
+                    assetToken={balancesToShow?.token}
                     disabled={!balancesToShow?.reservedBalance || balancesToShow?.reservedBalance?.isZero()}
                     price={currentPrice}
                   />

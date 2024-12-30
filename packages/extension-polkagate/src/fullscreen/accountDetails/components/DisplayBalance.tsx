@@ -64,7 +64,7 @@ export default function DisplayBalance ({ amount, decimal, disabled, onClick, op
                   stroke: `${disabled ? theme.palette.action.disabledBackground : theme.palette.secondary.light}`,
                   strokeWidth: 1.5,
                   transform:
-                    openCollapse !== undefined
+                    openCollapse !== undefined || disabled
                       ? openCollapse
                         ? 'rotate(-90deg)'
                         : 'rotate(90deg)'
