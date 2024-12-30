@@ -78,7 +78,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   }, [amountAsBN, staked, unstakeMaxAmount]);
 
   const unlockingLen = myPool?.stashIdAccount?.stakingLedger?.unlocking?.length;
-  const maxUnlockingChunks = api && (api.consts['staking']['maxUnlockingChunks'] as any)?.toNumber();
+  const maxUnlockingChunks = api?.consts['staking']['maxUnlockingChunks']?.toPrimitive() as unknown as number;
   const isPoolRoot = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.root), [formatted, myPool?.bondedPool?.roles?.root]);
   const isPoolDepositor = useMemo(() => String(formatted) === String(myPool?.bondedPool?.roles?.depositor), [formatted, myPool?.bondedPool?.roles?.depositor]);
   const poolState = useMemo(() => String(myPool?.bondedPool?.state), [myPool?.bondedPool?.state]);
@@ -131,7 +131,7 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
   }, [amountAsBN, api, poolConsts, decimal, staked, t, unstakeMaxAmount, isPoolDepositor, poolMemberCounter, poolState, token]);
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !formatted || !unbonded || !amountAsBN) {
       return;
     }
 
@@ -141,23 +141,23 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
       return setEstimatedFee(api?.createType('Balance', BN_ONE) as Balance);
     }
 
-    // eslint-disable-next-line no-void
-    poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen !== undefined && unbonded && formatted && void unbonded(...params).paymentInfo(formatted).then((i) => {
-      const fee = i?.partialFee;
+    poolWithdrawUnbonded && maxUnlockingChunks && unlockingLen !== undefined &&
+      unbonded(...params).paymentInfo(formatted).then((i) => {
+        const fee = i?.partialFee;
 
-      if (unlockingLen < maxUnlockingChunks) {
-        setEstimatedFee(fee);
-      } else {
-        const dummyParams = [1, 1];
+        if (unlockingLen < maxUnlockingChunks) {
+          setEstimatedFee(fee);
+        } else {
+          const dummyParams = [1, 1];
 
-        poolWithdrawUnbonded(...dummyParams)
-          .paymentInfo(formatted)
-          .then(
-            (j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee || BN_ZERO)) as Balance)
-          )
-          .catch(console.error);
-      }
-    }).catch(console.error);
+          poolWithdrawUnbonded(...dummyParams)
+            .paymentInfo(formatted)
+            .then(
+              (j) => setEstimatedFee(api.createType('Balance', fee.add(j?.partialFee || BN_ZERO)) as Balance)
+            )
+            .catch(console.error);
+        }
+      }).catch(console.error);
   }, [amountAsBN, api, decimal, formatted, maxUnlockingChunks, poolWithdrawUnbonded, unbonded, unlockingLen]);
 
   const onChangeAmount = useCallback((value: string) => {
@@ -190,6 +190,13 @@ export default function Unstake ({ address, setRefresh, setShow, show }: Props):
       const partial = staked.sub(poolConsts.minCreateBond);
 
       setUnstakeMaxAmount(false);
+
+      if (partial.isNeg()) { // This rare condition occurs only for old stakers who staked before the poolConsts.minCreateBond value was updated.
+        setAmountAsBN(staked);
+        setAmount(amountToHuman(staked, decimal));
+
+        return;
+      }
 
       if (!partial.isZero()) {
         setAmountAsBN(partial);

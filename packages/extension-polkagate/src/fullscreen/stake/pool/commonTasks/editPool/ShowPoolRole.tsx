@@ -18,7 +18,7 @@ interface Props {
   chain: Chain | null | undefined;
 }
 
-export default function ShowPoolRole ({ chain, roleAddress, roleTitle, showDivider }: Props) {
+function ShowPoolRole ({ chain, roleAddress, roleTitle, showDivider }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -41,7 +41,7 @@ export default function ShowPoolRole ({ chain, roleAddress, roleTitle, showDivid
           />
         </Grid>
         : <Typography fontSize='20px' fontWeight={300} lineHeight='23px'>
-          {t<string>('To be Removed')}
+          {t('To be Removed')}
         </Typography>
       }
       {showDivider &&
@@ -50,3 +50,5 @@ export default function ShowPoolRole ({ chain, roleAddress, roleTitle, showDivid
     </Grid>
   );
 }
+
+export default React.memo(ShowPoolRole);

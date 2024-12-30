@@ -43,7 +43,7 @@ export interface ChangesProps {
   } | undefined
 }
 
-export default function ManageEditPool ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
+function ManageEditPool ({ address, api, chain, onClose, pool, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(address);
 
@@ -109,3 +109,5 @@ export default function ManageEditPool ({ address, api, chain, onClose, pool, se
     </>
   );
 }
+
+export default React.memo(ManageEditPool);

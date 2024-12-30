@@ -30,7 +30,7 @@ interface Props {
   changes: ChangesProps | undefined;
 }
 
-export default function Edit ({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
+function Edit ({ api, chain, changes, onClose, pool, setChanges, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { hierarchy } = useContext(AccountContext);
@@ -117,7 +117,7 @@ export default function Edit ({ api, chain, changes, onClose, pool, setChanges, 
 
   const nextBtnDisable = changes && Object.values(changes).every((value) => {
     if (typeof value === 'object' && value !== null) {
-      return Object.values(value as { [s: string]: unknown }).every((nestedValue) => nestedValue === undefined);
+      return Object.values(value as Record<string, unknown>).every((nestedValue) => nestedValue === undefined);
     }
 
     return value === undefined;
@@ -255,3 +255,5 @@ export default function Edit ({ api, chain, changes, onClose, pool, setChanges, 
     </>
   );
 }
+
+export default React.memo(Edit);
