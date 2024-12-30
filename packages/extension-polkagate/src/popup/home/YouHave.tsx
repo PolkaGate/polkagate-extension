@@ -23,6 +23,7 @@ import ConnectedDappIcon from '../../partials/ConnectedDappIcon';
 import Menu from '../../partials/Menu';
 import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../util/api/getPrices';
 import { countDecimalPlaces, fixFloatingPoint } from '../../util/utils';
+import Notifications from '../notification/Notifications';
 
 export const isPriceOutdated = (youHave: YouHaveType | null | undefined): boolean | undefined =>
   youHave ? (Date.now() - youHave.date > 2 * PRICE_VALIDITY_PERIOD) : undefined;
@@ -62,7 +63,7 @@ export default function YouHave (): React.ReactElement {
     overflow: 'hidden',
     position: 'relative',
     px: '10px',
-    py: '5px',
+    py: '10px',
     width: '100%'
   };
 
@@ -86,12 +87,30 @@ export default function YouHave (): React.ReactElement {
   return (
     <>
       <Grid alignItems='flex-start' container sx={{ ...youHaveStyle }}>
-        <Grid container item sx={{ textAlign: 'left' }}>
-          <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, lineHeight: 'normal', mt: '10px' }}>
+        <Grid alignItems='center' container item justifyContent='space-between'>
+          <Typography sx={{ fontSize: '16px', fontVariant: 'small-caps', fontWeight: 400, lineHeight: 'normal', width: 'fit-content' }}>
             {t('Total balance')}
           </Typography>
+          <Grid container item width='fit-content'>
+            <HideBalance
+              darkColor={theme.palette.secondary.light}
+              hide={isHideNumbers}
+              lightColor={theme.palette.secondary.light}
+              onClick={toggleHideNumbers}
+              size={20}
+            />
+            <Notifications />
+            <Infotip2 placement='bottom' text={t('Menu options')}>
+              <IconButton
+                onClick={onMenuClick}
+                sx={{ p: 0 }}
+              >
+                <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
+              </IconButton>
+            </Infotip2>
+          </Grid>
         </Grid>
-        <Grid container item justifyContent='flex-start' pt='15px'>
+        <Grid container item justifyContent='flex-start' pt='5px'>
           {isHideNumbers
             ? <Box
               component='img'
@@ -148,23 +167,6 @@ export default function YouHave (): React.ReactElement {
               </Stack>
             </>
           }
-          <Infotip2 placement = 'bottom' text={t('Menu options')}>
-            <IconButton
-              onClick={onMenuClick}
-              sx={{ p: 0, position: 'absolute', pt: '3px', right: '3px', top: '8px' }}
-            >
-              <MoreVertIcon sx={{ color: 'secondary.light', fontSize: '33px' }} />
-            </IconButton>
-          </Infotip2>
-        </Grid>
-        <Grid item sx={{ position: 'absolute', right: '30px', top: '5px' }}>
-          <HideBalance
-            darkColor={theme.palette.secondary.light}
-            hide={isHideNumbers}
-            lightColor={theme.palette.secondary.light}
-            onClick={toggleHideNumbers}
-            size={20}
-          />
         </Grid>
         <ConnectedDappIcon />
       </Grid>

@@ -1,7 +1,9 @@
 // Copyright 2019-2024 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, useTheme } from '@mui/material';
+/* eslint-disable react/jsx-max-props-per-line */
+
+import { Grid, IconButton, useTheme } from '@mui/material';
 import React from 'react';
 
 import { HEADER_COMPONENT_STYLE } from '../../fullscreen/governance/FullScreenHeader';
@@ -25,7 +27,7 @@ interface IconProps {
 const ClosedEye = ({ color, size = 20 }: IconProps) => (
   <svg
     fill='none'
-    height= {`${size}px`}
+    height={`${size}px`}
     viewBox='0 -5 24 24'
     width={`${size}px`}
     xmlns='http://www.w3.org/2000/svg'
@@ -74,28 +76,21 @@ const HideBalance = ({ darkColor, hide = false, lightColor, noBorder = true, onC
   const color = theme.palette.mode === 'dark' ? darkColor || theme.palette.text.primary : lightColor || theme.palette.text.secondary;
 
   return (
-    <Infotip2 text={t(hide ? 'Show numbers' : 'Hide numbers')} placement = { isExtensionMode ? 'left' : 'bottom'}>
+    <Infotip2 placement={isExtensionMode ? 'left' : 'bottom'} text={t(hide ? 'Show numbers' : 'Hide numbers')}>
       <Grid
         alignItems='center'
         aria-label={hide ? 'Show balance' : 'Hide balance'}
-        component='button'
         container
         item
         justifyContent='center'
-        onClick={onClick}
-        sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border }}
-        type='button'
+        sx={{ ...HEADER_COMPONENT_STYLE, border: noBorder ? 0 : HEADER_COMPONENT_STYLE?.border, ...(isExtensionMode ? { minWidth: 'unset' } : {}) }}
       >
-        { hide
-          ? <ClosedEye
-            color={color}
-            size={size}
-          />
-          : <OpenEye
-            color={color}
-            size={size}
-          />
-        }
+        <IconButton onClick={onClick} sx={{ m: 0 }}>
+          {hide
+            ? <ClosedEye color={color} size={size} />
+            : <OpenEye color={color} size={size} />
+          }
+        </IconButton>
       </Grid>
     </Infotip2>
   );

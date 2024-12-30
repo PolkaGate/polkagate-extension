@@ -6,4 +6,5 @@ export * from './closeWebsockets.js';
 export * from './fastestEndpoint.js';
 export * from './getChainEndpoints.js';
 export * from './metadataFromApi';
+export * from './newReferendaNotification.js';
 export * from './toGetNativeToken.js';

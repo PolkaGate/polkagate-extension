@@ -25,7 +25,7 @@ interface Props {
   address: string;
 }
 
-const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>;}, ref: React.Ref<unknown>) {
+const Transition = React.forwardRef(function Transition (props: TransitionProps & { children: React.ReactElement<unknown>; }, ref: React.Ref<unknown>) {
   return <Slide direction='up' ref={ref} {...props} />;
 });
 
@@ -98,12 +98,27 @@ function AccountMenu ({ address, isMenuOpen, setShowMenu }: Props): React.ReactE
 
   return (
     <Dialog
+      PaperProps={{
+        sx: {
+          backgroundImage: 'unset',
+          bgcolor: 'transparent',
+          boxShadow: 'unset'
+        }
+      }}
       TransitionComponent={Transition}
+      componentsProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: 'blur(5px)',
+            bgcolor: 'transparent'
+          }
+        }
+      }}
       fullScreen
       open={isMenuOpen}
     >
-      <Grid bgcolor='divider' container height='100%' width='357px' zIndex={10}>
-        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', height: 'parent.innerHeight' }} width='100%'>
+      <Grid bgcolor='transparent' container height='100%' width='357px' zIndex={10}>
+        <Grid alignItems='flex-start' bgcolor='background.default' container display='block' item mt='46px' px='46px' sx={{ borderRadius: '10px 10px 0px 0px', boxShadow: '0px 0px 10px rgba(255, 255, 255, 0.25)', height: 'parent.innerHeight' }} width='100%'>
           <Grid container item justifyContent='center' my='8px'>
             <Identity address={address} api={api} chain={chain} formatted={formatted} identiconSize={30} showSocial={false} style={{ fontSize: '22px' }} subIdOnly />
           </Grid>

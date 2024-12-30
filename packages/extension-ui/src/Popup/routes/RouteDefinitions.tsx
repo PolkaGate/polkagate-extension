@@ -46,6 +46,7 @@ import Metadata from '@polkadot/extension-polkagate/src/popup/metadata';
 import CreateAccount from '@polkadot/extension-polkagate/src/popup/newAccount/createAccountFullScreen';
 import Derive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveAccount';
 import FullscreenDerive from '@polkadot/extension-polkagate/src/popup/newAccount/deriveFromAccountsFullscreen';
+import NotificationSettings from '@polkadot/extension-polkagate/src/popup/notification/NotificationSettings';
 import LoginPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement';
 import ForgotPassword from '@polkadot/extension-polkagate/src/popup/passwordManagement/ForgotPasswordFS';
 import ResetWallet from '@polkadot/extension-polkagate/src/popup/passwordManagement/ResetFS';
@@ -309,6 +310,11 @@ const FEATURE_ROUTES: RouteConfig[] = [
     Component: History,
     path: '/history/:address',
     trigger: 'history'
+  },
+  {
+    Component: NotificationSettings,
+    path: '/manage-notification',
+    trigger: 'manageNotification'
   },
   {
     Component: ManageProxies,

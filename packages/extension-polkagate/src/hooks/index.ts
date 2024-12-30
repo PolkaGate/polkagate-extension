@@ -79,6 +79,7 @@ export { default as useNativeTokenPrice } from './useNativeTokenPrice';
 export { default as useNeedsPutInFrontOf } from './useNeedsPutInFrontOf';
 export { default as useNeedsRebag } from './useNeedsRebag';
 export { default as useNFT } from './useNFT';
+export { default as useNotifications } from './useNotifications';
 export { default as useNotifyOnChainChange } from './useNotifyOnChainChange';
 export { default as useOutsideClick } from './useOutsideClick';
 export { default as usePendingRewards } from './usePendingRewards';
